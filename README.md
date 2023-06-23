@@ -60,6 +60,10 @@ fix link:
 https://github.com/JOJOexchange/JUSDV1/commit/5770d15edac41c78d9726f02e988aa8e14601f3e
 https://github.com/JOJOexchange/smart-contract-EVM/commit/94ea554ec1c563e945bd388051f6438826818b47
 
+**IAm0x52**
+
+Fixes look good. GeneralRepay and DepositStableCoinToDealer now implement contract whitelists
+
 # Issue M-1: JUSD borrow fee rate is less than it should be 
 
 Source: https://github.com/sherlock-audit/2023-04-jojo-judging/issues/73 
@@ -156,6 +160,10 @@ Change formula to:
 fix link:
 https://github.com/JOJOexchange/JUSDV1/commit/334fb691eea57a96fb7220e67e31517638725a80
 
+**IAm0x52**
+
+Fix looks good. Interest is now accumulated with each state update rather than only when the rate is changed. 
+
 # Issue M-2: Subaccount#execute lacks payable 
 
 Source: https://github.com/sherlock-audit/2023-04-jojo-judging/issues/111 
@@ -214,6 +222,10 @@ Add a `receive() external payable` to the contract or `execute()` to add a `paya
 fix link:
 https://github.com/JOJOexchange/smart-contract-EVM/commit/64dfd055deeae857fa99d4703cdbf7ba1291b8ad
 
+**IAm0x52**
+
+Fix looks good. `execute()` is now payable and value is check to make sure no ETH is left in the contract
+
 # Issue M-3: It's possible to reset primaryCredit and secondaryCredit for insurance account 
 
 Source: https://github.com/sherlock-audit/2023-04-jojo-judging/issues/159 
@@ -269,6 +281,10 @@ Do not allow `handleBadDebt` call with insurance address.
 
 fix link: 
 https://github.com/JOJOexchange/smart-contract-EVM/commit/78c53b4721ae7bb97fb922f78342d0ee4a1825dd
+
+**IAm0x52**
+
+Fix looks good. Since the order has been changed, clearing bad debt on the insurance account will result it in still having the same debt before and after the call
 
 # Issue M-4: Unable to liquidate USDC blacklisted user's loan due to transferring leftover collateral back in USDC 
 
@@ -428,6 +444,10 @@ File: JUSDBank.sol
 fix link:
 https://github.com/JOJOexchange/JUSDV1/commit/4071d470c126bac25b1a391d5dc1582db258280d
 
+**IAm0x52**
+
+Fix looks good. I don't agree with the validity of this issue as it's not really a deposit (no new assets are entering the bank) but more of a transfer. However this fix does prevent this behavior.
+
 # Issue M-6: Lack of burn mechanism for JUSD repayments causes oversupply of JUSD 
 
 Source: https://github.com/sherlock-audit/2023-04-jojo-judging/issues/306 
@@ -506,6 +526,10 @@ Will add burn mechanism in the contract
 
 fix link:
 https://github.com/JOJOexchange/JUSDV1/commit/a72604efba3a9cbce997aefde742be4c5036a039
+
+**IAm0x52**
+
+Fix looks good. Excess JUSD can now be refunded by the owner
 
 # Issue M-7: UniswapPriceAdaptor fails after updating impact 
 
@@ -610,6 +634,10 @@ Escalations have been resolved successfully!
 Escalation status:
 - [thangtranth](https://github.com/sherlock-audit/2023-04-jojo-judging/issues/364/#issuecomment-1568663166): accepted
 
+**IAm0x52**
+
+Fix looks good. Type of newImpact changed from uint32 to uint256
+
 # Issue M-8: In over liquidation, if the liquidatee has USDC-denominated assets for sale, the liquidator can buy the assets with USDC to avoid paying USDC to the liquidatee 
 
 Source: https://github.com/sherlock-audit/2023-04-jojo-judging/issues/369 
@@ -700,6 +728,14 @@ Bob liquidates 60 ETH of Alice's position, Bob needs to pay 100000 JUSD, and 60 
 fix commit:
 https://github.com/JOJOexchange/JUSDV1/commit/5918d68be9b5b021691f768da98df5f712ac6edd
 
+**IAm0x52**
+
+Need validation of amount sent to `liquidated`
+
+**IAm0x52**
+
+Fix looks good. Reentrancy exists if _primaryAsset is also a collateral but team has explicitly stated that this is never the case.
+
 # Issue M-9: FlashLoanLiquidate.JOJOFlashLoan has no slippage control when swapping USDC 
 
 Source: https://github.com/sherlock-audit/2023-04-jojo-judging/issues/373 
@@ -780,6 +816,10 @@ Consider making FlashLoanLiquidate.JOJOFlashLoan use the minReceive parameter fo
 
 fix link: https://github.com/JOJOexchange/JUSDV1/commit/b0e7d27cf484d9406a267a1b38ac253113101e8e
 
+**IAm0x52**
+
+Fix looks good. JOJOFlashloan now validates minReceived when swapping
+
 # Issue M-10: JUSDBank users can bypass individual collateral borrow limits 
 
 Source: https://github.com/sherlock-audit/2023-04-jojo-judging/issues/403 
@@ -839,6 +879,10 @@ fix link:
 https://github.com/JOJOexchange/JUSDV1/commit/611ce809ab1c3c300d888053bea6960ed69ec3c3
 https://github.com/JOJOexchange/JUSDV1/commit/0ba5d98aac0e8109f38ebf2382bf84391a7c846b
 
+**IAm0x52**
+
+Fixes look good. Borrow specific functions have been replaced with the generic checks, preventing this issue
+
 # Issue M-11: `quoteAllAvailablePoolsWithTimePeriod` can be manipulated with low liquidity pools 
 
 Source: https://github.com/sherlock-audit/2023-04-jojo-judging/issues/438 
@@ -892,6 +936,20 @@ Manual review.
 JOJO should consider replacing `quoteAllAvailablePoolsWithTimePeriod` with [`quoteSpecificPoolsWithTimePeriod`](https://github.com/Mean-Finance/uniswap-v3-oracle/blob/main/solidity/contracts/StaticOracle.sol#L77) and selecting a subset of Uniswap V3 pools with sufficient liquidity to avoid price manipulation.
 
 
+
+
+
+## Discussion
+
+**JoscelynFarr**
+
+fix link:
+https://github.com/JOJOexchange/smart-contract-EVM/commit/1dbc9001be667af42952c110e9fdf04fd7826669
+https://github.com/JOJOexchange/JUSDV1/commit/eed86242c2be0cd70e6b412124eb05ed5e3c92dc
+
+**IAm0x52**
+
+Fixes look good. Pools are now specified instead of being pulled dynamically 
 
 # Issue M-12: chainlinkAdaptor uses the same heartbeat for both feeds which is highly dangerous 
 
@@ -981,6 +1039,10 @@ Escalations have been resolved successfully!
 Escalation status:
 - [iamjakethehuman](https://github.com/sherlock-audit/2023-04-jojo-judging/issues/449/#issuecomment-1568436039): accepted
 
+**IAm0x52**
+
+Fix looks good. Contract now uses separate heartbeats for asset and USDC
+
 # Issue M-13: GeneralRepay#repayJUSD returns excess USDC to `to` address rather than msg.sender 
 
 Source: https://github.com/sherlock-audit/2023-04-jojo-judging/issues/459 
@@ -1027,4 +1089,8 @@ Either send the excess back to the caller or allow them to specify where the ref
 
 fix link: 
 https://github.com/JOJOexchange/JUSDV1/commit/7382ce40dd54f0a396fb5d3f13ab3cfede0493e2
+
+**IAm0x52**
+
+Fix looks good. Excess USDC is now refunded to msg.sender
 
